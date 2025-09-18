@@ -3,8 +3,8 @@ require_relative "../config/environment"
 require "sinatra/activerecord/rake"
 
 RSpec.configure do |config|
+  # Database setup
   config.before(:suite) do
-    # Run migrations for test environment
     Rake::Task["db:migrate"].execute
     DatabaseCleaner.clean_with(:truncation)
   end

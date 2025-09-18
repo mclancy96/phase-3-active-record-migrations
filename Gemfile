@@ -1,5 +1,6 @@
 source "https://rubygems.org"
 
+ruby "3.3.5"
 # An object-relational mapper
 # https://guides.rubyonrails.org/active_record_basics.html
 gem "activerecord", "~> 6.1"
@@ -25,8 +26,17 @@ group :development do
   gem "pry"
 end
 
+gem "rubocop"
+
 # These gems will only be used when we are running tests
 group :test do
   gem "database_cleaner"
   gem "rspec"
 end
+gem "fiddle"
+gem "logger"
+gem "ostruct"
+
+gem "rubocop-rake", "~> 0.7.1"
+
+gem "rubocop-rspec", "~> 3.7"

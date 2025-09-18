@@ -110,17 +110,17 @@ The simplest way to work with migrations is through Rake tasks that we're given
 through a new gem, the `sinatra-activerecord` gem. This gem provides some common
 Rake tasks for working with Active Record.
 
-Run `rake -T` to see the list of commands we have.
+Run `bin/rake -T` to see the list of commands we have.
 
-> **Note**: If you get an error when trying to run `rake` commands, you may have
+> **Note**: If you get an error when trying to run `bin/rake` commands, you may have
 > a newer version of Rake already installed compared to this lesson, causing a
-> conflict. To avoid this error, run `bundle exec rake -T`. Adding `bundle exec`
-> indicates that you want `rake` to run within the context of this lesson's
-> bundle (defined in the `Gemfile`), not the default version of `rake` you have
+> conflict. To avoid this error, run `bin/rake -T`. Adding `bundle exec`
+> indicates that you want `bin/rake` to run within the context of this lesson's
+> bundle (defined in the `Gemfile`), not the default version of `bin/rake` you have
 > installed globally on your computer. See also:
 > [But I Don't Want to `bundle exec`][bundle exec]
 
-Let's look at the `Rakefile`. The commands listed when running `rake -T` are
+Let's look at the `Rakefile`. The commands listed when running `bin/rake -T` are
 made available as Rake tasks through `require 'sinatra/activerecord/rake'`.
 
 Now take a look again at `environment.rb`, which our `Rakefile` also requires:
@@ -150,7 +150,7 @@ database, which is configured in the `database.yml` file.
 To create a migration for setting up our `artists` table, run this command:
 
 ```console
-$ bundle exec rake db:create_migration NAME=create_artists
+bin/rake db:create_migration NAME=create_artists
 ```
 
 Running this command will generate a new file in `db/migrations` called
@@ -277,8 +277,11 @@ going to see it in action!
 It's time to run our migration. Run this command:
 
 ```console
-$ bundle exec rake db:migrate
+bin/rake db:migrate
+```
+You'll then see it output the following if it successful:
 
+```console
 == 20210716095220 CreateArtists: migrating ====================================
 -- create_table(:artists)
    -> 0.0008s
@@ -313,7 +316,12 @@ migration.
 You can also use this Rake task to see the status of your migrations:
 
 ```console
-$ bundle exec rake db:migrate:status
+bin/rake db:migrate:status
+```
+
+This will output the following:
+
+```console
 
 database: db/development.sqlite3
 
@@ -347,7 +355,7 @@ To test our newly created class out, let's use the `console` Rake task which
 we've created in the `Rakefile`:
 
 ```console
-$ bundle exec rake console
+bin/rake console
 ```
 
 Check that the class exists:
@@ -412,7 +420,7 @@ Take a look at these [CRUD methods][crud], and play around with them.
 Let's add a `favorite_food` column to our `artists` table. Active Record keeps
 track of the migrations we've already run, so **adding the new code to our
 `20210716095220_create_artists.rb` file won't work**. If you try running
-`rake db:migrate` again now, the `20210716095220_create_artists.rb` migration
+`bin/rake db:migrate` again now, the `20210716095220_create_artists.rb` migration
 won't be re-executed.
 
 Generally, the best practice for database management (especially in a production
@@ -423,7 +431,7 @@ current database structure.
 To make this change we're going to need a new migration:
 
 ```console
-$ bundle exec rake db:create_migration NAME=add_favorite_food_to_artists
+bin/rake db:create_migration NAME=add_favorite_food_to_artists
 ```
 
 And add the migration code to the file:
@@ -452,13 +460,13 @@ task!
 Now that you've saved the migration, go back to the terminal to run:
 
 ```console
-$ bundle exec rake db:migrate
+bin/rake db:migrate
 ```
 
 Check the status of the migration:
 
 ```console
-$ bundle exec rake db:migrate:status
+bin/rake db:migrate:status
 
 database: db/development.sqlite3
 
@@ -482,7 +490,7 @@ ActiveRecord::Schema.define(version: 2021_07_16_101748) do
 end
 ```
 
-Awesome! Now go back to the console with the `rake console` command, and check
+Awesome! Now go back to the console with the `bin/rake console` command, and check
 it out:
 
 ```rb
@@ -497,16 +505,16 @@ that change yet! We wanted to keep track of the artist's favorite **flower**,
 not their favorite **food**. OH NO! No worries, we'll **roll back** to the first
 migration.
 
-Run `rake -T`. Which command should we use? That's right: `db:rollback`:
+Run `bin/rake -T`. Which command should we use? That's right: `db:rollback`:
 
 ```console
-$ bundle exec rake db:rollback
+bin/rake db:rollback
 ```
 
 Check the status of the migration:
 
 ```console
-$ bundle exec rake db:migrate:status
+bin/rake db:migrate:status
 
 database: db/development.sqlite3
 
@@ -551,8 +559,8 @@ end
 Now, run the migration again and check the status:
 
 ```console
-$ bundle exec rake db:migrate
-$ bundle exec rake db:migrate:status
+bin/rake db:migrate
+bin/rake db:migrate:status
 database: db/development.sqlite3
 
  Status   Migration ID    Migration Name
@@ -561,7 +569,7 @@ database: db/development.sqlite3
    up     20210716101748  Add favorite flower to artists
 ```
 
-Success! Run `learn test` now to pass all the tests.
+Success! Run `bin/rspec` now to pass all the tests.
 
 ### When Should I Roll Back?
 
@@ -581,22 +589,22 @@ any SQL code by hand.
 To add a feature to the database, such as creating or altering a table, here is
 a summary of the steps:
 
-- Run `rake db:create_migration NAME=description_of_change` to generate a
+- Run `bin/rake db:create_migration NAME=description_of_change` to generate a
   migration file
 - Write the [migration code][change-method] in the migration file
-- Run the migration with `rake db:migrate`
-- Check the status of the migration with `rake db:migrate:status`, and inspect
+- Run the migration with `bin/rake db:migrate`
+- Check the status of the migration with `bin/rake db:migrate:status`, and inspect
   the `db/schema.rb` file to ensure the correct changes were made
 
 To change an existing migration (that hasn't been shared with other team members
 yet), here is a summary of the steps:
 
-- Run `rake db:rollback` to undo the last migration
-- Check the status of the migration with `rake db:migrate:status` and make sure
+- Run `bin/rake db:rollback` to undo the last migration
+- Check the status of the migration with `bin/rake db:migrate:status` and make sure
   it is "down"
 - Edit the migration file
-- Run `rake db:migrate` to update the database
-- Check the status of the migration with `rake db:migrate:status`, and inspect
+- Run `bin/rake db:migrate` to update the database
+- Check the status of the migration with `bin/rake db:migrate:status`, and inspect
   the `db/schema.rb` file to ensure the correct changes were made
 
 ## Resources
